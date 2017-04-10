@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <declare-styleable name="HmViewfinderView">
+        <attr name="scan_width" format="dimension|reference"/>
+        <attr name="scan_height" format="dimension|reference"/>
+        <attr name="marginTop" format="dimension|reference"/>
+        <attr name="left_margin" format="dimension|reference"/>
+        <attr name="right_margin" format="dimension|reference"/>
+        <attr name="scan_bitmap" format="reference"/>
+        <attr name="scan_period" format="integer"/>
+        <attr name="scan_line" format="reference"/>
+    </declare-styleable>
+
+</resources>

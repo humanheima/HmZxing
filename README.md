@@ -1,0 +1,1 @@
+###HmZxingLibrary 基于 zxing-core-3.3.0.jar和zxing的官方示例
