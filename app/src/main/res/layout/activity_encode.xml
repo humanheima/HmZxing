@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
+
+    <ImageView
+        android:id="@+id/image_view"
+        android:layout_width="match_parent"
+        android:layout_centerHorizontal="true"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginTop="16dp"/>
+
+    <EditText
+        android:id="@+id/edit_content"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/ll_bottom"
+        android:layout_margin="8dp"
+        android:background="@null"
+        android:hint="请输入内容"/>
+
+    <LinearLayout
+        android:id="@+id/ll_bottom"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/btn_one_d"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="生成条形码"/>
+
+        <Button
+            android:id="@+id/btn_qr_code"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="生成二维码"/>
+
+        <Button
+            android:id="@+id/btn_image_qr_code"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="生成带图片的二维码"/>
+    </LinearLayout>
+
+</RelativeLayout>

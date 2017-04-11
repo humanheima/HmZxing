@@ -24,6 +24,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private TextView textResult;
     private Button btnCaptureOnce;
     private Button btnCaptureRepeat;
+    private Button btnGenerate;
     private String[] RQ_PREMS = new String[]{Manifest.permission.CAMERA};
 
     @Override
@@ -33,8 +34,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         textResult = (TextView) findViewById(R.id.textResult);
         btnCaptureOnce = (Button) findViewById(R.id.btn_capture_once);
         btnCaptureRepeat = (Button) findViewById(R.id.btn_capture_repeat);
+        btnGenerate = (Button) findViewById(R.id.btn_generate);
         btnCaptureOnce.setOnClickListener(this);
         btnCaptureRepeat.setOnClickListener(this);
+        btnGenerate.setOnClickListener(this);
     }
 
     public void captureOnce() {
@@ -68,6 +71,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     break;
                 case R.id.btn_capture_repeat:
                     captureRepeat();
+                    break;
+                case R.id.btn_generate:
+                    EncodeActivity.launch(this);
                     break;
                 default:
                     break;
