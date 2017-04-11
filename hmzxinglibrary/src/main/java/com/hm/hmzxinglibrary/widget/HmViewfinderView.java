@@ -47,6 +47,8 @@ public class HmViewfinderView extends RelativeLayout {
     private TranslateAnimation animation;
     //识别框的高度
     private int scanHeight;
+    //识别框的宽度
+    private int scanWidth;
     //识别框距顶部的高度
     private int marginTop;
     //识别框距左边的距离
@@ -55,6 +57,7 @@ public class HmViewfinderView extends RelativeLayout {
     private int marginRight;
     //扫描线的周期
     private int scanPeriod;
+    private RelativeLayout relativeLayout;
 
     public HmViewfinderView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -68,6 +71,7 @@ public class HmViewfinderView extends RelativeLayout {
         marginLeft = (int) ta.getDimension(R.styleable.HmViewfinderView_left_margin, 24);
         marginRight = (int) ta.getDimension(R.styleable.HmViewfinderView_right_margin, 24);
         scanHeight = (int) ta.getDimension(R.styleable.HmViewfinderView_scan_height, ScreenUtil.dp2px(context, 240));
+        scanWidth = (int) ta.getDimension(R.styleable.HmViewfinderView_scan_width, ScreenUtil.dp2px(context, 0));
         scanPeriod = ta.getInt(R.styleable.HmViewfinderView_scan_period, 3000);
         scanLine = ta.getDrawable(R.styleable.HmViewfinderView_scan_line);
         ta.recycle();
@@ -76,6 +80,7 @@ public class HmViewfinderView extends RelativeLayout {
         CameraManager.LEFT_MARGIN = marginLeft;
         CameraManager.RIGHT_MARGIN = marginRight;
         CameraManager.HEIGHT = scanHeight;
+        CameraManager.WIDTH = scanWidth;
     }
 
     private void initScanView(Context context) {
@@ -84,8 +89,10 @@ public class HmViewfinderView extends RelativeLayout {
             scanLine = getResources().getDrawable(R.drawable.ic_scan_line);
         }
         scanFrame = getResources().getDrawable(R.drawable.bg_scan);
-        RelativeLayout relativeLayout = new RelativeLayout(context);
-        int scanWidth = ScreenUtil.getScreenWidth(context) - ScreenUtil.dp2px(context, marginLeft) - ScreenUtil.dp2px(context, marginRight);
+        relativeLayout = new RelativeLayout(context);
+        if (scanWidth == 0) {
+            scanWidth = ScreenUtil.getScreenWidth(context) - ScreenUtil.dp2px(context, marginLeft) - ScreenUtil.dp2px(context, marginRight);
+        }
         LayoutParams params = new LayoutParams(scanWidth, scanHeight);
         params.topMargin = marginTop;
         params.addRule(RelativeLayout.CENTER_HORIZONTAL);
@@ -122,6 +129,14 @@ public class HmViewfinderView extends RelativeLayout {
             animation.cancel();
         }
         animation.start();
+    }
+
+    public void setMarginTop(int marginTop) {
+        this.marginTop = marginTop;
+        CameraManager.TOP_MARGIN = marginTop;
+        RelativeLayout.LayoutParams layoutParams= (LayoutParams) relativeLayout.getLayoutParams();
+        layoutParams.topMargin=marginTop;
+        relativeLayout.setLayoutParams(layoutParams);
     }
 
 }

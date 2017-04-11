@@ -3,6 +3,8 @@ package com.hm.hmzxinglibrary;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
@@ -20,6 +22,7 @@ import com.google.zxing.BarcodeFormat;
 import com.google.zxing.DecodeHintType;
 import com.google.zxing.Result;
 import com.hm.hmzxinglibrary.camera.CameraManager;
+import com.hm.hmzxinglibrary.util.ScreenUtil;
 import com.hm.hmzxinglibrary.widget.HmViewfinderView;
 
 import java.io.IOException;
@@ -47,6 +50,10 @@ public final class CaptureActivity extends AppCompatActivity implements SurfaceH
     private Map<DecodeHintType, ?> decodeHints;
     private String characterSet;
     private Result savedResultToShow;
+    //是否是竖屏，默认是竖屏
+    private boolean portrait = true;
+    //多次扫描的时候标记
+    private int count;
 
     public Handler getHandler() {
         return handler;
@@ -67,7 +74,16 @@ public final class CaptureActivity extends AppCompatActivity implements SurfaceH
         hasSurface = false;
         inactivityTimer = new InactivityTimer(this);
         beepManager = new BeepManager(this);
+        //控制闪光灯
         ambientLightManager = new AmbientLightManager(this);
+        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+            portrait = true;
+        } else {
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+            portrait = false;
+
+        }
     }
 
     @Override
@@ -80,7 +96,10 @@ public final class CaptureActivity extends AppCompatActivity implements SurfaceH
         // off screen.
         cameraManager = new CameraManager(getApplication());
         myViewfinderView = (HmViewfinderView) findViewById(R.id.hmViewFinderView);
-
+        if (!isPortrait()) {
+            //横屏的时候设置距顶部的距离小一点
+            myViewfinderView.setMarginTop(ScreenUtil.dp2px(this, 16));
+        }
         handler = null;
 
         ambientLightManager.start(cameraManager);
@@ -95,15 +114,14 @@ public final class CaptureActivity extends AppCompatActivity implements SurfaceH
         characterSet = null;
 
         if (intent != null) {
-
             String action = intent.getAction();
             String dataString = intent.getDataString();
-
             if (ACTION.equals(action)) {
-
-                // Scan the formats the intent requested, and return the result to the calling activity.
+                // 扫描一次，返回结果Scan the formats the intent requested, and return the result to the calling activity.
                 source = IntentSource.NATIVE_APP_INTENT;
+                //解析intent 传递过来想要扫描的格式
                 decodeFormats = DecodeFormatManager.parseDecodeFormats(intent);
+                //解析intent 传递过来想要扫描的暗示
                 decodeHints = DecodeHintManager.parseDecodeHints(intent);
 
                 if (intent.hasExtra(Intents.Scan.WIDTH) && intent.hasExtra(Intents.Scan.HEIGHT)) {
@@ -129,16 +147,12 @@ public final class CaptureActivity extends AppCompatActivity implements SurfaceH
 
             } else if (dataString != null && dataString.contains("http://www.google") &&
                     dataString.contains("/m/products/scan")) {
-
                 // Scan only products and send the result to mobile Product Search.
                 source = IntentSource.PRODUCT_SEARCH_LINK;
                 sourceUrl = dataString;
                 decodeFormats = DecodeFormatManager.PRODUCT_FORMATS;
-
             }
-
             characterSet = intent.getStringExtra(Intents.Scan.CHARACTER_SET);
-
         }
 
         SurfaceView surfaceView = (SurfaceView) findViewById(R.id.preview_view);
@@ -151,6 +165,10 @@ public final class CaptureActivity extends AppCompatActivity implements SurfaceH
             // Install the callback and wait for surfaceCreated() to init the camera.
             surfaceHolder.addCallback(this);
         }
+    }
+
+    public boolean isPortrait() {
+        return portrait;
     }
 
     private void decodeOrStoreSavedBitmap(Bitmap bitmap, Result result) {
@@ -203,7 +221,8 @@ public final class CaptureActivity extends AppCompatActivity implements SurfaceH
         TextView textResult = (TextView) findViewById(R.id.text_repeat_scan_result);
         CharSequence displayContents = resultHandler.getText();
         Log.e(TAG, "format=" + rawResult.getBarcodeFormat().toString() + ",displayContents=" + displayContents);
-        textResult.setText(displayContents);
+        count++;
+        textResult.setText(displayContents + "第" + count + "次");
     }
 
     // Briefly show the contents of the barcode, then handle the result outside Barcode Scanner.

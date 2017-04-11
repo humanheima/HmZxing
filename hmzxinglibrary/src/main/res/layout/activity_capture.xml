@@ -15,9 +15,9 @@
         android:id="@+id/hmViewFinderView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:left_margin="24dp"
+        app:left_margin="10dp"
         app:marginTop="100dp"
-        app:right_margin="24dp"
+        app:right_margin="10dp"
         app:scan_height="140dp"/>
 
     <TextView
